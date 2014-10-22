@@ -8,4 +8,4 @@ Integrates Flask, Tornado's websockets, and SockJS for graceful degradation
 3. Run 'vagrant up'
 4. Navigate to http://localhost:8089 in your browser to view the tornado app
 
-![Screenshot](campusdebate.github.com/flask-tornado-websockets-sample/img/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/campusdebate/flask-tornado-websockets-sample/master/screenshot.png)
