@@ -34,14 +34,6 @@
         };
 
         conn.onmessage = function(e) {
-          if (e.data=="up") {
-            curvote +=1;
-            }
-          else if (e.data=='down') {
-            curvote +=-1;
-            };
-          
-          log(curvote);
           log(e.data);
         };
 
@@ -87,13 +79,11 @@
       });
 
       $('#upvote').click(function() {
-        log('Upvoting');
         conn.send('up');
         return false;
       });
 
       $('#downvote').click(function() {
-        log('Downvoting');
         conn.send('down');
         return false;
       });
@@ -109,7 +99,12 @@
 </script>
 </head>
 <body>
-<h3>Chat!</h3>
+
+  <div class="container">
+  <div class="row clearfix">
+    <div class="col-md-12 column">
+
+<h3>Vote!</h3>
 <div id="protocols" style="float: right">
   <ul>
     <li>
@@ -157,5 +152,8 @@
 <div id="upvote"><h2><span class="label label-success">Upvote</h2></span></div>
 <div id="downvote"><h2><span class="label label-danger">Downvote</span></h2></div>
 
+    </div>
+  </div>
+</div>
 </body>
 </html>
