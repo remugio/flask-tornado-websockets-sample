@@ -17,8 +17,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 $script = <<SCRIPT
 echo "Provisioning Flask, Tornado, Zeroconf"
 sudo apt-get update
-sudo apt-get -y install python avahi-daemon python-pip git curl
+sudo apt-get -y install python avahi-daemon python-pip git curl upstart
 sudo pip install -r /vagrant/requirements.txt
+
+cp -v /vagrant/tornado.conf /etc/init/tornado.conf
+sudo initctl emit vagrant-ready
 SCRIPT
 
 config.vm.provision "shell", inline: $script
