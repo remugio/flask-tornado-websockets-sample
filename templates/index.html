@@ -6,7 +6,74 @@
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js"></script>
+
   <script>
+  
+  var player,
+    tag = document.createElement('script'),
+    firstScriptTag = document.getElementsByTagName('script')[0];
+
+tag.src = "https://www.youtube.com/iframe_api";
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+function onPlaybackQualityChange(event) {
+    console.log(event);
+}
+
+function onPlayerStateChange(event) {
+    console.log(event);
+}
+
+function onReady(event) {
+    function logDuration() {
+        $("#position").text(player.getCurrentTime());
+        $("#duration").text(player.getDuration());
+        window.setTimeout(logDuration, 1000);
+    }
+    
+    logDuration();
+    
+    console.log(event);
+//    player.loadVideoById("OEtzyDNbwes", 0);
+    player.playVideo();
+}
+
+function onError(event) {
+    console.log(event);
+}
+
+window.onYouTubeIframeAPIReady = function onYouTubeIframeAPIReady() {
+    console.log("IFRAME API READY!");
+    player = new YT.Player("wooot", {
+        height: 270,
+        width: 480,
+        videoId: "jExYHd1yyWc",
+        playerVars: {
+            controls: 0,
+            iv_load_policy: 3 // Disables annotations.
+        },
+        events: {
+            "onReady": onReady,
+            "onStateChange": onPlayerStateChange,
+            "onPlaybackQualityChange": onPlaybackQualityChange,
+            "onError": onError
+        }
+    });
+ };
+ 
+ var myPlayerState;
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+          console.log("Playing!");
+        };
+        if (event.data == YT.PlayerState.PAUSED) {
+          console.log("Paused!");
+        }
+        myPlayerState = event.data;
+        console.log(myPlayerState);
+      };
+  
+  
     $(function() {
       var conn = null;
       var curvote=null;
@@ -79,12 +146,19 @@
       });
 
       $('#upvote').click(function() {
-        conn.send('up');
+        if (myPlayerState != 1) {
+            bootstrap_alert.warning('The video must be playing in order to vote!');
+        } else{
+            conn.send(JSON.stringify({"vote": 'up', "time": player.getCurrentTime()}));
+        };
         return false;
       });
-
       $('#downvote').click(function() {
-        conn.send('down');
+        if (myPlayerState != 1) {
+            bootstrap_alert.warning('The video must be playing in order to vote!');
+        } else{
+            conn.send(JSON.stringify({"vote": 'down', "time": player.getCurrentTime()}));
+        };
         return false;
       });
 
@@ -96,6 +170,16 @@
         return false;
       });
     });
+
+  $( document ).ready(function() {
+    console.log( "ready!" );
+    bootstrap_alert = function() {};
+bootstrap_alert.warning = function(message) {
+            $('#alert_placeholder').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>'+message+'</span></div>');
+        };
+
+});
+
 </script>
 </head>
 <body>
@@ -103,6 +187,7 @@
   <div class="container">
   <div class="row clearfix">
     <div class="col-md-12 column">
+    <div id = "alert_placeholder"></div>
 
 <h3>Vote!</h3>
 <div id="protocols" style="float: right">
@@ -149,8 +234,28 @@
   <input type="submit" />
 </form>-->
 
-<div id="upvote"><h2><span class="label label-success">Upvote</h2></span></div>
+<div id="upvote"><h2><span class="label label-success">Upvote</span></h2></div>
 <div id="downvote"><h2><span class="label label-danger">Downvote</span></h2></div>
+
+<div id="wooot"></div>
+<table>
+    <thead>
+        <tr>
+            <td>Key</td>
+            <td>Value</td>
+        </tr>
+     </thead>
+    <tbody>
+        <tr>
+            <td>Position</td>
+            <td id="position"></td>
+        </tr>
+        <tr>
+            <td>Duration</td>
+            <td id="duration"></td>
+        </tr>
+    </tbody>
+</table>
 
     </div>
   </div>

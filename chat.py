@@ -27,13 +27,8 @@ class ChatConnection(sockjs.tornado.SockJSConnection):
 
     def on_message(self, message):
         # Broadcast message
-        global curvote
-        if message == 'up':
-            curvote += 1
-        if message == 'down':
-            curvote += -1
-        print json.dumps(message)
-        self.broadcast(self.participants,"{\"curvote\":%d}" % curvote)
+        print json.dumps(json.loads(message), indent=2)
+        self.broadcast(self.participants, json.dumps(json.loads(message)))
 
     def on_close(self):
         # Remove client from the clients list and broadcast leave message
